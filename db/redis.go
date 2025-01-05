@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 )
 
-func RedisInit() {
+func RedisInit() *redis.Client {
 	client := redis.NewClient(&redis.Options{
         Addr:	  "localhost:6379",
         Password: "",
@@ -32,4 +33,16 @@ func RedisInit() {
         panic(err)
     }
     fmt.Println("Connection", val)
+
+	return client
+}
+
+func HealthCheck(c *gin.Context, rdb *redis.Client) {
+	ctx := context.Background()
+	err := rdb.Ping(ctx).Err()
+	if err != nil {
+		c.JSON(500, gin.H{"status": "error", "message": "Redis is not reachable :("})
+		return
+	}
+	c.JSON(200, gin.H{"status": "ok", "message": "Redis is reachable!"})
 }
