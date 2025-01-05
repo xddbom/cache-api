@@ -6,7 +6,7 @@ import (
 )
 
 func main() {    
-    db.RedisInit()
+    var rdb = db.RedisInit()
 
     r := gin.Default()
 
@@ -14,6 +14,10 @@ func main() {
         c.JSON(200, gin.H{
             "message": "Welcome to Cache API!",
         })
+    })
+
+    r.GET("/health", func(c *gin.Context){
+        db.HealthCheck(c, rdb)
     })
 
     r.Run(":8080")
