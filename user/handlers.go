@@ -52,7 +52,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message": "User created successfully",
+		"message": "User created successfully!",
 		"user_id": user.ID,
 	})
 }
@@ -139,7 +139,7 @@ func DeleteUser(c* gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "User deleted successfully",
+		"message": "User deleted successfully!",
 		"user_id": userID,
 	})
 }

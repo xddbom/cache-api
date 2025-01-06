@@ -6,10 +6,10 @@ import (
 )
 
 type User struct {
-    ID        string `json:"id"`
+    ID       string `json:"id"`
     Name     string `json:"name"`
     Email    string `json:"email"`
-    Age        int    `json:"age"`
+    Age      int    `json:"age"`
 }
 
 func (u *User) ToJSON() (string, error) {
