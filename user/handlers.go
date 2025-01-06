@@ -11,6 +11,7 @@ import (
 )
 
 
+// POST
 func CreateUser(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -23,7 +24,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-
+	const UserTTL = 60 * time.Second
 	var user User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -42,7 +43,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	redisKey := "user:" + user.ID
-	err = rdb.Set(ctx, redisKey, userData, 0).Err()
+	err = rdb.Set(ctx, redisKey, userData, UserTTL).Err()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to save user in Redis",
@@ -57,6 +58,7 @@ func CreateUser(c *gin.Context) {
 }
 
 
+// GET
 func GetUser(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -93,10 +95,19 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
+	const UserTTL = 60 * time.Second
+	if err := rdb.Expire(ctx, redisKey, UserTTL).Err(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to update TTL for user",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, user)
 }
 
 
+// DELETE
 func DeleteUser(c* gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
