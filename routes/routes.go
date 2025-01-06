@@ -18,5 +18,6 @@ func RoutesSetup(r *gin.Engine, rdb *redis.Client) {
         db.HealthCheck(c, rdb)
     })
 
-    r.POST("/users", user.CreateUser)
+    r.POST("/user", user.CreateUser)
+    r.GET("/user/:id", user.GetUser)
 }

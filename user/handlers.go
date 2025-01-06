@@ -56,3 +56,42 @@ func CreateUser(c *gin.Context) {
 	})
 }
 
+
+func GetUser(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	rdb, ok := c.MustGet("rdb").(*redis.Client)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to connect to Redis",
+		})
+	return
+	}
+
+	userID := c.Param("id") // ?
+	redisKey := "user:" + userID
+
+	userData, err := rdb.Get(ctx, redisKey).Result()
+	if err == redis.Nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User not found",
+		})
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to retrieve user from Redis",
+		})
+		return
+	}
+
+	var user User
+	if err := json.Unmarshal([]byte(userData), &user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to deserialize user data",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
+}
