@@ -20,4 +20,5 @@ func RoutesSetup(r *gin.Engine, rdb *redis.Client) {
 
     r.POST("/user", user.CreateUser)
     r.GET("/user/:id", user.GetUser)
+    r.DELETE("/user/:id", user.DeleteUser)
 }

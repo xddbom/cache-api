@@ -95,3 +95,40 @@ func GetUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, user)
 }
+
+
+func DeleteUser(c* gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	rdb, ok := c.MustGet("rdb").(*redis.Client)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to connect to Redis",
+		})
+		return
+	}
+
+	userID := c.Param("id")
+	redisKey := "user:" + userID
+
+	deleted, err := rdb.Del(ctx, redisKey).Result()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to delete user from Redis",
+		})
+		return
+	}
+
+	if deleted == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User deleted successfully",
+		"user_id": userID,
+	})
+}
