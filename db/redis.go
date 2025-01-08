@@ -29,10 +29,10 @@ func RedisInit() *redis.Client {
     }
 
 	val, err := client.Get(Ctx, "Connection").Result()
-    if err != nil {
-        panic(err)
-    }
-    fmt.Println("Connection", val)
+        if err != nil {
+        	panic(err)
+    	}
+    	fmt.Println("Connection", val)
 
 	return client
 }
