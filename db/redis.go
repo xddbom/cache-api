@@ -20,7 +20,7 @@ func RedisInit() *redis.Client {
 
 	err := client.Ping(Ctx).Err()
 	if err != nil {
-		panic(fmt.Sprintf("Ошибка подключения к Redis: %v", err))
+		panic(fmt.Sprintf("Connection error to Redis: %v", err))
 	}
 	
 	err = client.Set(Ctx, "Connection", "successful!", 0).Err()
