@@ -10,10 +10,10 @@ import (
 
 func RedisInit() *redis.Client {
 	client := redis.NewClient(&redis.Options{
-        Addr:	  "localhost:6379",
-        Password: "",
-        DB:		  0,  
-        Protocol: 2, 
+        Addr:	  	"localhost:6379",
+        Password: 	"",
+        DB:		0,  
+        Protocol: 	2, 
     })
 
 	Ctx := context.Background()
