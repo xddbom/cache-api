@@ -24,9 +24,9 @@ func RedisInit() *redis.Client {
 	}
 	
 	err = client.Set(Ctx, "Connection", "successful!", 0).Err()
-    if err!= nil {
-        panic(err)
-    }
+    	if err!= nil {
+        	panic(err)
+    	}
 
 	val, err := client.Get(Ctx, "Connection").Result()
         if err != nil {
